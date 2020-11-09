@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Article;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -15,7 +16,14 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        // Prendo l'id dell'utente autenticato
+        $user_id = Auth::id();
+        //dd($user_id);
+
+        // Mostro solo i post dell'utente 
+        $articles = Article::where('user_id', $user_id)->get();
+        
+        return view('admin.post.index', compact('articles'));
     }
 
     /**
