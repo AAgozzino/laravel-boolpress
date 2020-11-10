@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
+    <button type="button" class="btn btn-outline-primary">
+        <a href="{{route('admin.posts.create')}}">New post</a>    
+    </button>
     <table class="table">
         <thead class="thead-dark">
         <tr>
@@ -21,15 +24,13 @@
             <td>{{$article->slug}}</td>
             <td>
                 <div>
-                    <button type="button" class="btn btn-info btn-sm">
-                        <a href="{{route('admin.posts.show', $article)}}">View</a>
-                    </button>
+                    <a href="{{route('admin.posts.show', $article)}}">View</a>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-dark btn-sm">Edit</button>
+                    <a href="{{route('admin.posts.update', $article)}}">Edit</a>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                    <a href="{{route('admin.posts.destroy', $article)}}">Delete</a>
                 </div>
             </td>
             </tr>

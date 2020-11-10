@@ -23,7 +23,7 @@ Auth::routes();
 Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware('auth')->group(function () {
     // Rotte specifiche per admin
     Route::get('/', 'HomeController@index')->name('home');
-    Route::resource('posts', 'ArticleController@index');
+    Route::resource('posts', 'ArticleController');
 });
 
 // Rotta index per guests
