@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use App\Mail\SendNewMail;
+use Illuminate\Support\Facades\Mail;
 
 class ArticleController extends Controller
 {
@@ -66,6 +69,8 @@ class ArticleController extends Controller
         $newArticle->image = $path;
 
         $newArticle->save();
+        
+        Mail::to($newArticle->user->email)->send(new SendNewMail($newArticle));
 
         return redirect()->route('admin.posts.show', $newArticle->id);
     }
@@ -88,9 +93,10 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article)
+    public function edit($id)
     {
-        //
+        $article = Article::findOrFail($id);
+        return view('admin.post.edit', compact('article'));
     }
 
     /**
@@ -100,9 +106,35 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Article $article)
+    public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+
+        $request->validate([
+            'title' => 'required',
+            'excerpt' => 'required',
+            'content' => 'required',
+            'slug' => [
+                'required',
+                Rule::unique('articles')->ignore($id),
+            ],
+            'image' => 'nullable|image'
+        ]);
+
+        $path = Storage::disk('public')->put('images', $data['image']);
+        
+        $article = Article::find($id);
+
+        $article->user_id = Auth::id();
+        $article->title = $data['title'];
+        $article->excerpt = $data['excerpt'];
+        $article->content = $data['content'];
+        $article->slug = $data['slug'];
+        $article->image = $path;
+
+        $article->update($data);
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -111,8 +143,11 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Article $article)
+    public function destroy($id)
     {
-        //
+        $article = Article::find($id);
+        $article->delete();
+
+        return redirect()->route('admin.posts.index');
     }
 }

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <button type="button" class="btn btn-outline-primary">
+    <button type="button" class="btn btn-outline-primary mb-3">
         <a href="{{route('admin.posts.create')}}">New post</a>    
     </button>
     <table class="table">
@@ -27,10 +27,14 @@
                     <a href="{{route('admin.posts.show', $article)}}">View</a>
                 </div>
                 <div>
-                    <a href="{{route('admin.posts.update', $article)}}">Edit</a>
+                    <a href="{{route('admin.posts.edit', $article)}}">Edit</a>
                 </div>
                 <div>
-                    <a href="{{route('admin.posts.destroy', $article)}}">Delete</a>
+                    <form action="{{route("admin.posts.destroy", $article)}}" method="POST">
+                        @method("DELETE")
+                        @csrf
+                        <input type="submit" value="Delete">
+                        </form>
                 </div>
             </td>
             </tr>
